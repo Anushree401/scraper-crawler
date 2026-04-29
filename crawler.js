@@ -13,9 +13,9 @@ async function crawl_page(base_url, current_url, pages) {
         console.log(`   → ${current_url}`);
         console.log(`   → Params: ${Object.keys(params).join(", ")}`);
     }
-    const interestingParams = ["id", "q", "search", "redirect", "token"];
+    const interesting_params = ["id", "q", "search", "redirect", "token"];
     const detected = Object.keys(params).filter(p =>
-        interestingParams.includes(p.toLowerCase())
+        interesting_params.includes(p.toLowerCase())
     );
     if (detected.length > 0) {
         console.log("🔥 Interesting Params:");
@@ -29,6 +29,7 @@ async function crawl_page(base_url, current_url, pages) {
     console.log(`actively crawling: ${current_url}`);    
     const page_details = await scrape_page(current_url);
     page_details.params = params;
+    page_details.interesting_params = detected;
     pages[normalized_current_url] = page_details;
     // console.log(`actively crawling: ${current_url}`);
     // console.log(`  → ${JSON.stringify(page_details)}`);
