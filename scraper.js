@@ -1,10 +1,11 @@
 const cheerio = require("cheerio");
+const boxen = require("boxen").default;
+const chalk = require("chalk").default;
 
 /**
  * Scrape a URL and return details about the page.
  * Input: url string
  * Output: object with page details (title, links, images, etc.)
- * How: Fetches page, parses with cheerio, extracts info
  */
 async function scrape_page(url) {
     try {
@@ -14,7 +15,7 @@ async function scrape_page(url) {
         
         return {
             url: url,
-            title: $('title').text() || 'No title',
+            title: ($('title').text() || 'No title').trim().replace(/\s+/g, ' '),
             links: $('a').length,
             images: $('img').length,
             headings: {
@@ -30,21 +31,48 @@ async function scrape_page(url) {
 
 module.exports = { scrape_page };
 
-// CLI for testing
 if (require.main === module) {
     (async () => {
         if (process.argv.length < 3) {
-            console.log("no url provided");
+            console.log(chalk.red.bold("✖ No URL provided!"));
             process.exit(1);
         }
-        const url = process.argv[2];
-        const result = await scrape_page(url);
-        console.log("\n========== SCRAPER RESULT ==========\n");
-        console.log(`URL: ${result.url}`);
-        console.log(`Title: ${result.title}`);
-        console.log(`Links: ${result.links}`);
-        console.log(`Images: ${result.images}`);
-        console.log(`H1: ${result.headings.h1}, H2: ${result.headings.h2}, H3: ${result.headings.h3}`);
-        console.log("\n========== END RESULT ==========\n");
+        const target_url = process.argv[2];
+        const result = await scrape_page(target_url);        
+        const app_banner = [
+            "  ██████  ███▄    █▄▄▄▄▄   ██      ██████  ██▀███   ▄▄▄       █     █░ ██▓     ",
+            "▒██    ▒  ██ ▀█   █▓  ██▒ ▓██    ▒██    ▒ ▓██ ▒ ██▒▒████▄    ▓█░ █ ░█░▓██▒     ",
+            "░ ▓██▄   ▓██  ▀█ ██▒ ▓██░ ▒██    ░ ▓██▄   ▓██ ░▄█ ▒▒██  ▀█▄  ▒█░ █ ░█ ▒██░     ",
+            "  ▒   ██▒▓██▒  ▐▌██▒ ▓██  ░██    ▒   ██▒ ▒██▀▀█▄  ░██▄▄▄▄██ ░█░ █ ░█ ▒██░     ",
+            "▒██████▒▒▒██░   ▓██░ ▒██▄ ░██████▒██████▒▒░██▓ ▒██▒ ▓█   ▓██▒░░█████▓ ░██████▒"
+        ].map(line => chalk.cyan(line)).join('\n');
+
+        const heading_stats = Object.entries(result.headings || {})
+            .map(([k, v]) => `${chalk.yellow(k)}: ${chalk.white(v)}`)
+            .join(', ');
+        const report_content = [
+            `${chalk.bold.green('➜ URL:')}    ${chalk.blueBright(result.url)}`,
+            `${chalk.bold.green('➜ Title:')}  ${chalk.white(result.title)}`,
+            `${chalk.bold.green('➜ Links:')}  ${chalk.magenta(result.links || 0)}`,
+            `${chalk.bold.green('➜ Images:')} ${chalk.magenta(result.images || 0)}`,
+            `${chalk.bold.green('➜ Headers:')} ${heading_stats || chalk.gray('none')}`
+        ].join('\n');
+        const header_box = boxen(`${app_banner}\n\n${chalk.yellow.bold('⚡ Security Scraper & Web Crawler ⚡')}`, {
+            title: chalk.bold.cyan(' SPIDCRAWL V1.0 '),
+            titleAlignment: 'center',
+            textAlignment: 'center',
+            padding: 1,
+            borderStyle: 'double',
+            borderColor: 'cyan'
+        });
+        const pages_box = boxen(report_content, {
+            padding: 1,
+            borderStyle: 'single',
+            borderColor: 'blue'
+        });
+        console.log('\n' + header_box);
+        console.log(chalk.bold.cyan('📋 SCRAPER RESULT:\n'));
+        console.log(pages_box + '\n');
+        console.log(chalk.bold.yellow('=================== END OF AUDIT ===================\n'));
     })();
 }

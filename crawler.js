@@ -30,18 +30,18 @@ async function crawl_page(base_url, current_url, pages) {
     // Scrape the page and get details
     const pageDetails = await scrape_page(current_url);
     pages[normalized_current_url] = pageDetails;
-    console.log(`actively crawling: ${current_url}`);
-    console.log(`  → ${JSON.stringify(pageDetails)}`);
+    // console.log(`actively crawling: ${current_url}`);
+    // console.log(`  → ${JSON.stringify(pageDetails)}`);
     
     try {
         const resp = await fetch(current_url);
         if (resp.status > 399) {
-            console.log(`error fetching source: ${resp.status} on page: ${current_url}`);
+            // console.log(`error fetching source: ${resp.status} on page: ${current_url}`);
             return pages;
         }
         const content_type = resp.headers.get("content-type");
         if (!content_type.includes("text/html")) {
-            console.log(`non html respose, content type: ${content_type} on page: ${current_url}`);
+            // console.log(`non html respose, content type: ${content_type} on page: ${current_url}`);
             return pages;
         }
         const html_body = await resp.text();
@@ -50,7 +50,7 @@ async function crawl_page(base_url, current_url, pages) {
             pages = await crawl_page(base_url, next_url, pages);
         }
     } catch (err) {
-        console.log(`error fetching from: ${current_url} ${err.message}`);
+        // console.log(`error fetching from: ${current_url} ${err.message}`);
     }
     return pages;
 }
@@ -79,7 +79,7 @@ function get_urls_from_html(html_body, base_url) {
                 urls.push(url_obj.href);
             }
         } catch (err) {
-            console.log(`error with url: ${err.message}`);
+            // console.log(`error with url: ${err.message}`);
         }
     });
     return urls;
