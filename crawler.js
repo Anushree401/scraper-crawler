@@ -1,38 +1,37 @@
 const cheerio = require("cheerio");
 const { scrape_page } = require("./scraper");
 
-/**
- * How functions communicate:
- * crawl_page() calls get_urls_from_html() to extract links from HTML.
- * crawl_page() also uses normalized_url() to avoid duplicate visits.
- * All functions share data by passing URLs and the pages object.
- */
-
-/**
- * Crawl pages on the same site.
- * Input: base_url, current_url, pages object.
- * Output: updated pages object.
- * How: Recursively visits and tracks HTML pages on the same domain.
- */
 async function crawl_page(base_url, current_url, pages) {
     const base_url_obj = new URL(base_url);
     const current_url_obj = new URL(current_url);
     if (base_url_obj.hostname !== current_url_obj.hostname) {
         return pages;
     }
+    const params = Object.fromEntries(current_url_obj.searchParams.entries());
+    if (Object.keys(params).length > 0) {
+        console.log("🧠 Param URL Found:");
+        console.log(`   → ${current_url}`);
+        console.log(`   → Params: ${Object.keys(params).join(", ")}`);
+    }
+    const interestingParams = ["id", "q", "search", "redirect", "token"];
+    const detected = Object.keys(params).filter(p =>
+        interestingParams.includes(p.toLowerCase())
+    );
+    if (detected.length > 0) {
+        console.log("🔥 Interesting Params:");
+        console.log(`   → ${detected.join(", ")}`);
+    }
     const normalized_current_url = normalized_url(current_url);
     if (pages[normalized_current_url]) {
         return pages;
     }
     pages[normalized_current_url] = 1;
-    console.log(`actively crawling: ${current_url}`);
-    
-    // Scrape the page and get details
-    const pageDetails = await scrape_page(current_url);
-    pages[normalized_current_url] = pageDetails;
+    console.log(`actively crawling: ${current_url}`);    
+    const page_details = await scrape_page(current_url);
+    page_details.params = params;
+    pages[normalized_current_url] = page_details;
     // console.log(`actively crawling: ${current_url}`);
-    // console.log(`  → ${JSON.stringify(pageDetails)}`);
-    
+    // console.log(`  → ${JSON.stringify(page_details)}`);
     try {
         const resp = await fetch(current_url);
         if (resp.status > 399) {
@@ -55,19 +54,12 @@ async function crawl_page(base_url, current_url, pages) {
     return pages;
 }
 
-/**
- * Get all URLs from HTML.
- * Input: html string, base_url.
- * Output: array of URLs.
- * How: Finds <a> links and returns their URLs.
- */
 function get_urls_from_html(html_body, base_url) {
     const urls = [];
     const $ = cheerio.load(html_body);
     $('a').each((i, link) => {
         const href = $(link).attr('href');
         if (!href) return;
-        
         try {
             if (href.slice(0,1) === '/') {
                 // relative URL
@@ -85,19 +77,13 @@ function get_urls_from_html(html_body, base_url) {
     return urls;
 }
 
-/**
- * Normalize a URL string.
- * Input: url string.
- * Output: cleaned url string.
- * How: Removes trailing slash, lowercases host/path.
- */
 function normalized_url(url_string) {
     const url_obj = new URL(url_string);
-    const host_path = `${url_obj.hostname}${url_obj.pathname}`;
-    if (host_path.length > 0 && host_path.slice(-1) === '/') {
-        return host_path.slice(0,-1);
-    }
-    return host_path;
+    const base = `${url_obj.hostname}${url_obj.pathname}`;
+    const paramKeys = [...url_obj.searchParams.keys()]
+        .map(k => `${k}=`)
+        .join("&");
+    return paramKeys ? `${base}?${paramKeys}` : base;
 }
 
 module.exports = {
