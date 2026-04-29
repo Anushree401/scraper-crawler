@@ -26,7 +26,10 @@ async function crawl_page(base_url, current_url, pages) {
         return pages;
     }
     pages[normalized_current_url] = 1;
-    console.log(`actively crawling: ${current_url}`);    
+    const count = Object.keys(pages).length;
+    process.stdout.write(
+        `\r🕷️ Crawled: ${count} pages | ${current_url.slice(0, 50)}`
+    );   
     const page_details = await scrape_page(current_url);
     page_details.params = params;
     page_details.interesting_params = detected;
@@ -64,7 +67,7 @@ function get_urls_from_html(html_body, base_url) {
         try {
             if (href.slice(0,1) === '/') {
                 // relative URL
-                const url_obj = new URL(`${base_url}${href}`);
+                const url_obj = new URL(href, base_url);
                 urls.push(url_obj.href);
             } else {
                 // absolute URL
