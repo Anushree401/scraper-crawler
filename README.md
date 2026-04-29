@@ -125,20 +125,20 @@ H3: 0
 ## Coming Up!!!
 
 - I might detection like:
-    - Query params:
+    - Query params: ✅
         ```bash
         /search?q=
         /id=123
         ```
-    - Auth endpoints:
+    - Auth endpoints: ☑️
         ```bash
         /login /signup /admin
         ```
-    - API paths:
+    - API paths: ☑️
         ```bash
         /api/ /v1/ /graphql
         ```
-- I can add interesting page scoring
+- I can add interesting page scoring ☑️
   Instead of dumping pages, I can rank them:
   Example:
   ```javascript
@@ -147,13 +147,13 @@ H3: 0
     (params.length * 2) +
     (links < 5 ? 1 : 0)
   ```
-- I can add tech fingerprinting
+- I can add tech fingerprinting ☑️
   Pull from:
   ```bash
   headers (server, x-powered-by)
   HTML (React, Next.js, etc.)
   ```
-- I can add output modes
+- I can add output modes ☑️
   Right now it’s pretty I guess, but I can also add:
   ```bash
   JSON export
