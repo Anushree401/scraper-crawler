@@ -85,3 +85,10 @@ H1: 1, H2: 0, H3: 0
 2. https://quotes.toscrape.com/
 3. https://www.scrapethissite.com/pages/
 4. https://web-scraping.dev/   
+
+---
+
+## Resources referred to
+
+1. [Intro to Web Scrapers](https://medium.com/@joerosborne/intro-to-web-scraping-build-your-first-scraper-in-5-minutes-1c36b5c4b110)
+2. [Web Crawlers](https://kitrakiar73.medium.com/web-crawlers-how-to-build-one-89bf65716518) 
