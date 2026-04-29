@@ -28,6 +28,9 @@ A web crawler that:
 ## How to Run
 
 ```bash
+# Install dependencies
+npm install
+
 # Run the crawler on a website (crawls all pages + generates report)
 node index.js https://example.com
 
