@@ -40,13 +40,25 @@ node index.js https://example.com
 node scraper.js https://example.com
 ```
 
+---
+
 ## Example Output
 
-### Crawler (index.js)
-```
-starting crawl of: https://example.com
-actively crawling: https://example.com
-  → {"url":"https://example.com","title":"Example Domain","links":5,"images":1,"headings":{"h1":1,"h2":0,"h3":0}}
+### Crawler (`index.js`)
+
+```bash
+[+] Starting crawl: https://example.com
+
+[~] Actively crawling:
+    → https://example.com
+
+[✓] Page Analyzed:
+    URL:      https://example.com
+    Title:    Example Domain
+    Links:    5
+    Images:   1
+    Headers:  h1: 1 | h2: 0 | h3: 0
+
 
 ========== CRAWL REPORT (JSON) ==========
 
@@ -66,18 +78,28 @@ actively crawling: https://example.com
 
 ========== END REPORT ==========
 
-Total pages crawled: 1
+[✔] Total Pages Crawled: 1
 ```
 
-### Scraper (scraper.js)
-```
+---
+
+### Scraper (`scraper.js`)
+
+```bash
 ========== SCRAPER RESULT ==========
 
-URL: https://example.com
-Title: Example Domain
-Links: 5
-Images: 1
-H1: 1, H2: 0, H3: 0
+[Target]
+URL:    https://example.com
+Title:  Example Domain
+
+[Content Summary]
+Links:   5
+Images:  1
+
+[Structure]
+H1: 1
+H2: 0
+H3: 0
 
 ========== END RESULT ==========
 ```
