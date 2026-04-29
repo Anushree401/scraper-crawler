@@ -8,19 +8,23 @@ async function crawl_page(base_url, current_url, pages) {
         return pages;
     }
     const params = Object.fromEntries(current_url_obj.searchParams.entries());
-    if (Object.keys(params).length > 0) {
-        console.log("🧠 Param URL Found:");
-        console.log(`   → ${current_url}`);
-        console.log(`   → Params: ${Object.keys(params).join(", ")}`);
-    }
-    const interesting_params = ["id", "q", "search", "redirect", "token"];
+    // if (Object.keys(params).length > 0) {
+    //     console.log("🧠 Param URL Found:");
+    //     console.log(`   → ${current_url}`);
+    //     console.log(`   → Params: ${Object.keys(params).join(", ")}`);
+    // }
+    const interesting_params = [
+        "id", "q", "search", "redirect", "token",
+        "page", "page_num", "offset", "limit", "sort",
+        "filter", "query", "file", "path"
+    ];
     const detected = Object.keys(params).filter(p =>
         interesting_params.includes(p.toLowerCase())
     );
-    if (detected.length > 0) {
-        console.log("🔥 Interesting Params:");
-        console.log(`   → ${detected.join(", ")}`);
-    }
+    // if (detected.length > 0) {
+    //     console.log("🔥 Interesting Params:");
+    //     console.log(`   → ${detected.join(", ")}`);
+    // }
     const normalized_current_url = normalized_url(current_url);
     if (pages[normalized_current_url]) {
         return pages;

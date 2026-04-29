@@ -22,6 +22,29 @@ function generate_findings(pages) {
         : chalk.gray('No high-value targets detected');
 }
 
+function generate_param_summary(pages) {
+    const param_map = {};
+    for (const page of Object.values(pages)) {
+        const params = Object.keys(page.params || {});
+        if (params.length === 0) continue;
+        for (const p of params) {
+            if (!param_map[p]) {
+                param_map[p] = 0;
+            }
+            param_map[p]++;
+        }
+    }
+    const interesting_list = ["id", "q", "search", "redirect", "token"];
+    const lines = Object.entries(param_map)
+        .map(([param, count]) => {
+            const is_interesting = interesting_list.includes(param.toLowerCase());
+            const color = is_interesting ? chalk.red : chalk.yellow;
+            return `${color(param)} ${chalk.gray(`(${count}x)`)}`;
+        })
+        .join('\n');
+    return lines || chalk.gray('No query parameters found');
+}
+
 function print_report(pages) {
     const pages_array = Object.values(pages);
     const sorted_pages = sort_pages(pages);
@@ -101,8 +124,16 @@ function print_report(pages) {
             borderColor: 'blue'
         }
     );
-    console.log(findings_box + '\n');
+    const param_summary = generate_param_summary(pages);
+    const param_box = boxen(param_summary, {
+        title: chalk.bold.magenta(' 🧠 PARAM SURFACE '),
+        padding: 1,
+        borderStyle: 'round',
+        borderColor: 'magenta'
+    });
     console.log(header_box);
+    console.log(param_box + '\n');
+    console.log(findings_box + '\n');
     console.log(stats_box + '\n');
     console.log(chalk.bold.cyan('📋 PAGE DETAILS:\n'));
     console.log(pages_box + '\n');
