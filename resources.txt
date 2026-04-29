@@ -1,7 +1,0 @@
-https://medium.com/@joerosborne/intro-to-web-scraping-build-your-first-scraper-in-5-minutes-1c36b5c4b110
-https://github.com/thejoeosborne/simple-scraper
-
-id go with typescript since i need some learning in it 
-ill do both, python nd typescript 
-
-https://kitrakiar73.medium.com/web-crawlers-how-to-build-one-89bf65716518

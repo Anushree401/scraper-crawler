@@ -1,5 +1,0 @@
-for the crawler:
-node index.js https://wagslane.dev/     
-
-for the scraper:
-node scraper.js https://wagslane.dev/  
